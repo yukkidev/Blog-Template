@@ -29,6 +29,12 @@
           <input type="text" id="title" name="title" required>
           <label for="body">Body</label>
           <textarea id="body" name="body" rows="10" required></textarea>
+          <div class="blog-edit-options">
+            <label class="blog-toggle">
+              <input type="checkbox" id="createDisplay" checked>
+              <span>Visible</span>
+            </label>
+          </div>
           <button type="submit">Create Post</button>
         </form>
       </div>
@@ -99,7 +105,9 @@ document.querySelectorAll('.blog-tab').forEach(tab => {
 // --- Load posts (reversed: most recent first) ---
 let postsData = [];
 
-fetch(`${API_URL}/posts`)
+fetch(`${API_URL}/posts?all=true`, {
+  headers: { 'Authorization': `${getCookie('token')}` },
+})
   .then(response => response.json())
   .then(posts => {
     postsData = posts.reverse();
@@ -251,7 +259,7 @@ function createPost(event, postTitle, postBody) {
       'Content-Type': 'application/json',
       'Authorization': `${token}`,
     },
-    body: JSON.stringify({ title, content: body }),
+    body: JSON.stringify({ title, content: body, display: document.getElementById('createDisplay').checked }),
   })
     .then(response => {
       if (response.ok) {

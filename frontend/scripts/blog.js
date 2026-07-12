@@ -40,7 +40,8 @@ function loadPostFromQuery() {
   fetch(`${API_URL}/posts`)
     .then(response => response.json())
     .then(posts => {
-      const post = posts[postIndex];
+      const visiblePosts = posts.filter(post => post.display !== false);
+      const post = visiblePosts[postIndex];
       if (post) {
         displaySinglePost(post);
       } else {
@@ -55,7 +56,7 @@ function loadPostFromQuery() {
 fetch(`${API_URL}/posts`)
   .then(response => response.json())
   .then(posts => {
-    posts.reverse().forEach(post => {
+    posts.filter(post => post.display !== false).reverse().forEach(post => {
       const postDiv = document.createElement('div');
       postDiv.className = 'post';
 

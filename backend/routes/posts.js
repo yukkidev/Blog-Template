@@ -4,7 +4,10 @@ const express = require('express');
 const router = express.Router();
 const fs = require('fs');
 const path = require('path');
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
+const JWT_SECRET = process.env.JWT_SECRET;
 const auth = require('../middleware/auth');
 
 // Build the path to our data file
@@ -41,10 +44,31 @@ function generateId(title, posts) {
   return `${slug}_${next.toString().padStart(2, '0')}`;
 }
 
-// GET /posts - anyone can read posts (no auth needed)
+// GET /posts - returns visible posts by default.
+// With ?all=true and a valid auth token, returns all posts (for admin panel).
 router.get('/', (req, res) => {
   const posts = readPosts();
-  res.json(posts);
+
+  // If ?all=true is requested, verify auth before returning all posts
+  if (req.query.all === 'true') {
+    let token = req.headers.authorization;
+    if (!token) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    if (token.startsWith('Bearer ')) {
+      token = token.slice(7);
+    }
+    try {
+      jwt.verify(token, JWT_SECRET);
+      return res.json(posts);
+    } catch (err) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+  }
+
+  // Public: only return posts where display is not false
+  const visiblePosts = posts.filter((p) => p.display !== false);
+  res.json(visiblePosts);
 });
 
 // POST /posts - create a new post (requires login)
