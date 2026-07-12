@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Blog Manager</title>
+    <link rel="stylesheet" href="styles/blog.css">
+  </head>
+  <body onload="checkAuth()">
+
+    <div class="header">
+      <a href="blog.html"><button class="button back-button">&lt;</button></a>
+      <h1>Blog Manager</h1>
+    </div>
+
+    <div class="blog-manager-tabs">
+      <button class="blog-tab active" data-tab="posts">Posts</button>
+      <button class="blog-tab" data-tab="create">Create</button>
+    </div>
+
+    <div id="postsTab" class="blog-tab-content">
+      <div id="postsContainer" class="blog-posts-list"></div>
+    </div>
+
+    <div id="creationTab" class="blog-tab-content" style="display: none;">
+      <div id="post-form" class="blog-create-form">
+        <h2>New Post</h2>
+        <form onsubmit="createPost(event, title, body)">
+          <label for="title">Title</label>
+          <input type="text" id="title" name="title" required>
+          <label for="body">Body</label>
+          <textarea id="body" name="body" rows="10" required></textarea>
+          <button type="submit">Create Post</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="editOverlay" class="blog-edit-overlay" style="display: none;">
+      <div class="blog-edit-dialog">
+        <div class="blog-edit-header">
+          <h2>Edit Post</h2>
+          <button class="blog-edit-close" onclick="closeEditOverlay()">&times;</button>
+        </div>
+        <div class="blog-edit-body">
+          <input type="hidden" id="editPostId">
+          <label for="editTitle">Title</label>
+          <input type="text" id="editTitle">
+          <label for="editBody">Body</label>
+          <textarea id="editBody" rows="12"></textarea>
+          <div class="blog-edit-options">
+            <label class="blog-toggle">
+              <input type="checkbox" id="editFeatured">
+              <span>Featured</span>
+            </label>
+            <label class="blog-toggle">
+              <input type="checkbox" id="editDisplay">
+              <span>Visible</span>
+            </label>
+          </div>
+        </div>
+        <div class="blog-edit-footer">
+          <button class="blog-btn-cancel" onclick="closeEditOverlay()">Cancel</button>
+          <button class="blog-btn-save" onclick="saveEditPost()">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+function checkAuth() {
+  const token = getCookie('token');
+  if (!token) {
+    window.location.href = 'login.html';
+    return;
+  }
+  fetch(`${API_URL}/auth`, {
+    headers: { 'Authorization': `${token}` },
+  })
+    .then(response => {
+      if (!response.ok) {
+        window.location.href = 'login.html';
+      } else {
+        document.getElementById('post-form').style.display = 'block';
+      }
+    })
+    .catch(error => console.error(error));
+}
+
+// --- Tab switching ---
+document.querySelectorAll('.blog-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.blog-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const target = tab.dataset.tab;
+    document.getElementById('postsTab').style.display = target === 'posts' ? 'block' : 'none';
+    document.getElementById('creationTab').style.display = target === 'create' ? 'block' : 'none';
+  });
+});
+
+// --- Load posts (reversed: most recent first) ---
+let postsData = [];
+
+fetch(`${API_URL}/posts`)
+  .then(response => response.json())
+  .then(posts => {
+    postsData = posts.reverse();
+    renderPosts();
+  });
+
+function renderPosts() {
+  const container = document.getElementById('postsContainer');
+  container.innerHTML = '';
+
+  postsData.forEach(post => {
+    const card = document.createElement('div');
+    card.className = 'blog-post-card';
+    card.id = post.id;
+
+    const isVisible = post.display !== false;
+
+    card.innerHTML = `
+      <div class="blog-post-header">
+        <h3 class="blog-post-title">${escapeHtml(post.title)}</h3>
+        ${post.featured ? '<span class="blog-post-badge featured">Featured</span>' : ''}
+        <span class="blog-post-badge ${isVisible ? 'visible' : 'hidden-badge'}">${isVisible ? 'Visible' : 'Hidden'}</span>
+      </div>
+      <p class="blog-post-preview">${escapeHtml(truncate(post.body, 200))}</p>
+      <div class="blog-post-actions">
+        <button class="blog-btn blog-btn-edit" onclick="openEditOverlay('${post.id}')">Edit</button>
+        <button class="blog-btn blog-btn-delete" onclick="deletePost('${post.id}')">Delete</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function truncate(str, len) {
+  if (str.length <= len) return str;
+  return str.substring(0, str.lastIndexOf(' ', len)) + '...';
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// --- Edit overlay ---
+function openEditOverlay(postId) {
+  const post = postsData.find(p => p.id == postId);
+  if (!post) return;
+
+  document.getElementById('editPostId').value = post.id;
+  document.getElementById('editTitle').value = post.title;
+  document.getElementById('editBody').value = post.body;
+  document.getElementById('editFeatured').checked = !!post.featured;
+  document.getElementById('editDisplay').checked = post.display !== false;
+
+  document.getElementById('editOverlay').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeEditOverlay() {
+  document.getElementById('editOverlay').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function saveEditPost() {
+  const id = document.getElementById('editPostId').value;
+  const title = document.getElementById('editTitle').value;
+  const body = document.getElementById('editBody').value;
+  const featured = document.getElementById('editFeatured').checked;
+  const display = document.getElementById('editDisplay').checked;
+
+  const token = getCookie('token');
+  if (!token) {
+    window.location.href = 'login.html';
+    return;
+  }
+
+  fetch(`${API_URL}/posts/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `${token}`,
+    },
+    body: JSON.stringify({ title, content: body, featured, display }),
+  })
+    .then(response => {
+      if (response.ok) {
+        const post = postsData.find(p => p.id == id);
+        if (post) {
+          post.title = title;
+          post.body = body;
+          post.featured = featured;
+          post.display = display;
+        }
+      }
+    })
+    .catch(error => console.error(error));
+
+  closeEditOverlay();
+  renderPosts();
+}
+
+// --- Delete post ---
+function deletePost(postId) {
+  if (!confirm("Delete this post?")) return;
+
+  const token = getCookie('token');
+  if (!token) {
+    window.location.href = 'login.html';
+    return;
+  }
+
+  fetch(`${API_URL}/posts/${postId}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `${token}`,
+    },
+  })
+    .then(response => {
+      if (response.ok) {
+        postsData = postsData.filter(p => p.id != postId);
+        renderPosts();
+      } else {
+        alert('Error deleting post');
+      }
+    })
+    .catch(error => console.error(error));
+}
+
+// --- Create post ---
+function createPost(event, postTitle, postBody) {
+  event.preventDefault();
+  const token = getCookie('token');
+  if (!token) {
+    window.location.href = 'login.html';
+    return;
+  }
+
+  let title = postTitle;
+  let body = postBody;
+
+  if (typeof postTitle === 'object') title = postTitle.value;
+  if (typeof postBody === 'object') body = postBody.value;
+
+  fetch(`${API_URL}/posts`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `${token}`,
+    },
+    body: JSON.stringify({ title, content: body }),
+  })
+    .then(response => {
+      if (response.ok) {
+        alert('Post created successfully!');
+        document.getElementById('title').value = '';
+        document.getElementById('body').value = '';
+        document.querySelector('.blog-tab[data-tab="posts"]').click();
+        location.reload();
+      } else {
+        alert('Error creating post');
+      }
+    })
+    .catch(error => console.error(error));
+}
+
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="styles/blog.css">
+  </head>
+  <body>
+    <div class="login-container">
+      <h1>Login</h1>
+      <form>
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+
+        <button type="submit">Login</button>
+      </form>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+      document.querySelector('form').addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(event.target);
+        const username = formData.get('username');
+        const password = formData.get('password');
+
+        const response = await fetch(`${API_URL}/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const token = data.token;
+          document.cookie = `token=${token}; secure; samesite=strict`;
+          window.location.href = 'post.html';
+        } else {
+          alert('Invalid username or password');
+        }
+      });
+    </script>
+  </body>
+</html>

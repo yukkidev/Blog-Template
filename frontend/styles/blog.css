@@ -1,0 +1,539 @@
+/* ========================================
+   Blog Template - Standalone Stylesheet
+   ======================================== */
+
+/* --- Reset & Base --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #111;
+  color: #eee;
+  min-height: 100vh;
+}
+
+/* --- Header --- */
+.header {
+  padding: 30px 20px 20px;
+  text-align: center;
+  border-bottom: 1px solid #333;
+}
+
+.header h1 {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+/* --- Buttons --- */
+.button {
+  background: #222;
+  color: #eee;
+  border: 1px solid #555;
+  padding: 6px 14px;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+.button:hover {
+  background: #333;
+}
+
+.back-button {
+  float: left;
+}
+
+/* --- Public blog page --- */
+.posts-container {
+  max-width: 700px;
+  margin: 20px auto;
+  padding: 0 16px;
+}
+
+.post {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.post h2 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.post p {
+  line-height: 1.6;
+  color: #ccc;
+  margin-bottom: 8px;
+}
+
+.gradient {
+  position: relative;
+  max-height: 200px;
+  overflow: hidden;
+}
+
+.gradient::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  background: linear-gradient(transparent, #1a1a1a);
+}
+
+/* --- Blog manager tabs --- */
+.blog-manager-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  max-width: 700px;
+  margin: 20px auto 0;
+  padding: 0 16px;
+}
+
+.blog-tab {
+  flex: 1;
+  max-width: 200px;
+  padding: 10px 20px;
+  background: #1a1a1a;
+  border: 1px solid #444;
+  border-bottom: none;
+  cursor: pointer;
+  font-size: 15px;
+  color: #aaa;
+  transition: color 0.2s, background 0.2s;
+}
+
+.blog-tab:hover {
+  color: #ddd;
+}
+
+.blog-tab.active {
+  color: #fff;
+  background: #222;
+  border-bottom: 1px solid #222;
+}
+
+.blog-tab + .blog-tab {
+  margin-left: -1px;
+}
+
+/* --- Tab content --- */
+.blog-tab-content {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 16px 40px;
+}
+
+/* --- Posts list --- */
+.blog-posts-list {
+  max-height: 70vh;
+  overflow-y: auto;
+  border: 1px solid #333;
+  background: #151515;
+  padding: 12px;
+  border-radius: 4px;
+}
+
+/* --- Post card --- */
+.blog-post-card {
+  border: 1px solid #333;
+  background: #1a1a1a;
+  padding: 16px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  transition: border-color 0.2s;
+}
+
+.blog-post-card:last-child {
+  margin-bottom: 0;
+}
+
+.blog-post-card:hover {
+  border-color: #666;
+}
+
+.blog-post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.blog-post-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.blog-post-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border: 1px solid #555;
+  border-radius: 3px;
+  color: #aaa;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.blog-post-badge.featured {
+  border-color: #b8860b;
+  color: #daa520;
+}
+
+.blog-post-badge.visible {
+  border-color: #2d7a2d;
+  color: #5cb85c;
+}
+
+.blog-post-badge.hidden-badge {
+  border-color: #7a2d2d;
+  color: #d9534f;
+}
+
+.blog-post-preview {
+  text-align: left;
+  color: #999;
+  font-size: 14px;
+  margin: 8px 0;
+  line-height: 1.5;
+  max-height: 4.5em;
+  overflow: hidden;
+}
+
+/* --- Post action buttons --- */
+.blog-post-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.blog-btn {
+  padding: 6px 14px;
+  border: 1px solid #444;
+  background: #222;
+  color: #ccc;
+  cursor: pointer;
+  font-size: 13px;
+  border-radius: 3px;
+  transition: background 0.2s;
+}
+
+.blog-btn:hover {
+  background: #333;
+}
+
+.blog-btn-edit {
+  color: #5bc0de;
+}
+
+.blog-btn-delete {
+  color: #d9534f;
+}
+
+/* --- Create form --- */
+.blog-create-form {
+  border: 1px solid #333;
+  background: #1a1a1a;
+  padding: 24px;
+  border-radius: 4px;
+}
+
+.blog-create-form h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+
+.blog-create-form label {
+  display: block;
+  text-align: left;
+  margin-bottom: 6px;
+  color: #aaa;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.blog-create-form input[type="text"],
+.blog-create-form textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 16px;
+  border: 1px solid #444;
+  background: #111;
+  color: #eee;
+  font-family: inherit;
+  font-size: 15px;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.blog-create-form textarea {
+  min-height: 200px;
+}
+
+.blog-create-form button[type="submit"] {
+  padding: 10px 24px;
+  border: 1px solid #444;
+  background: #222;
+  color: #eee;
+  cursor: pointer;
+  font-size: 15px;
+  border-radius: 4px;
+}
+
+.blog-create-form button[type="submit"]:hover {
+  background: #333;
+}
+
+/* --- Full-page edit overlay --- */
+.blog-edit-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.blog-edit-dialog {
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  border: 1px solid #444;
+  background: #1a1a1a;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.blog-edit-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #333;
+}
+
+.blog-edit-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.blog-edit-close {
+  background: #8b0000;
+  border: none;
+  color: white;
+  font-size: 20px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.blog-edit-close:hover {
+  background: #a00;
+}
+
+.blog-edit-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.blog-edit-body label {
+  display: block;
+  text-align: left;
+  margin-bottom: 6px;
+  color: #aaa;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.blog-edit-body input[type="text"],
+.blog-edit-body textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 16px;
+  border: 1px solid #444;
+  background: #111;
+  color: #eee;
+  font-family: inherit;
+  font-size: 15px;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.blog-edit-body textarea {
+  min-height: 250px;
+}
+
+.blog-edit-options {
+  display: flex;
+  gap: 24px;
+  margin-top: 8px;
+}
+
+.blog-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #ccc;
+}
+
+.blog-toggle input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.blog-edit-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 20px;
+  border-top: 1px solid #333;
+}
+
+.blog-btn-cancel,
+.blog-btn-save {
+  padding: 8px 20px;
+  border: 1px solid #444;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+.blog-btn-cancel {
+  background: #333;
+  color: #ccc;
+}
+
+.blog-btn-cancel:hover {
+  background: #444;
+}
+
+.blog-btn-save {
+  background: #2d7a2d;
+  color: #fff;
+  border-color: #2d7a2d;
+}
+
+.blog-btn-save:hover {
+  background: #3a9a3a;
+}
+
+/* --- Login page --- */
+.login-container {
+  max-width: 360px;
+  margin: 80px auto;
+  padding: 0 16px;
+  text-align: center;
+}
+
+.login-container h1 {
+  margin-bottom: 24px;
+  font-size: 24px;
+}
+
+.login-container label {
+  display: block;
+  text-align: left;
+  margin-bottom: 6px;
+  color: #aaa;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.login-container input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 16px;
+  border: 1px solid #444;
+  background: #111;
+  color: #eee;
+  font-family: inherit;
+  font-size: 15px;
+  border-radius: 4px;
+}
+
+.login-container button {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #444;
+  background: #222;
+  color: #eee;
+  cursor: pointer;
+  font-size: 15px;
+  border-radius: 4px;
+}
+
+.login-container button:hover {
+  background: #333;
+}
+
+/* --- Mobile --- */
+@media (max-width: 600px) {
+  .header h1 {
+    font-size: 22px;
+  }
+
+  .blog-tab {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  .blog-tab-content {
+    padding: 0 10px 30px;
+  }
+
+  .blog-posts-list {
+    max-height: 65vh;
+  }
+
+  .blog-post-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .blog-post-actions {
+    flex-wrap: wrap;
+  }
+
+  .blog-edit-dialog {
+    width: 98%;
+    max-height: 95vh;
+  }
+
+  .blog-edit-body textarea {
+    min-height: 180px;
+  }
+}
